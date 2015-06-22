@@ -88,16 +88,16 @@ public class AllMovies extends ActionBarActivity {
             try {
                 final String MOVIES_URL_BASE =
                         "https://api.themoviedb.org/3/discover/movie?";
-                final String QUERY_PARAM = "sort_by";
+                final String Sort_PARAM = "sort_by";
                 final String FORMAT_PARAM = "api_key";
 
                 Uri uri = Uri.parse(MOVIES_URL_BASE).buildUpon()
-                        .appendQueryParameter(QUERY_PARAM, sort_by)
+                        .appendQueryParameter(Sort_PARAM, sort_by)
                         .appendQueryParameter(FORMAT_PARAM, "fa324076f75b84a267d88a4b41ea2ed8")
                         .build();
                 URL url = new URL(uri.toString());
 
-                Log.v("TAG ALL", "Built URI " + uri.toString());
+                Log.v("TAG All Movies", " Built URI " + uri.toString());
 
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
