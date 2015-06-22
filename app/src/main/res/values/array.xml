@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    String wt[] = new String[]{"metric", "ferh"};
+    <array name="sort">
+        <item>@string/popularity</item>
+        <item>@string/highest_rated</item>
+    </array>
+</resources>
