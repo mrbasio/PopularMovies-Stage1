@@ -10,7 +10,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".AllMovies"
+            android:name=".Activities.AllMovies"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,20 +19,20 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MovieDetail"
+            android:name=".Activities.MovieDetail"
             android:label="@string/title_activity_movie_detail"
-            android:parentActivityName=".AllMovies" >
+            android:parentActivityName=".Activities.AllMovies" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.ahmad.popularmovies01.AllMovies" />
+                android:value=".Activities.AllMovies" />
         </activity>
         <activity
-            android:name=".SettingsActivity"
+            android:name=".Activities.SettingsActivity"
             android:label="SettingsActivity"
-            android:parentActivityName=".AllMovies">
+            android:parentActivityName=".Activities.AllMovies">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.ahmad.popularmovies01.AllMovies" />
+                android:value=".Activities.AllMovies" />
         </activity>
     </application>
 
