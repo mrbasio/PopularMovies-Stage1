@@ -1,13 +1,29 @@
 package com.example.ahmad.popularmovies01.Data;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import com.example.ahmad.popularmovies01.Objects.Movie;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by ahmad on 28/07/2015.
  */
 public class MoviesDbHelper extends SQLiteOpenHelper {
+
+    public static final String TABLE_NAME = "popular";
+
+    public static final String COLUMN_MOVIE_TITLE = "movie_title";
+    public static final String COLUMN_MOVIE_OVERVIEW = "movie_overview";
+    public static final String COLUMN_MOVIE_VOTE_AVERAGE = "movie_vote_average";
+    public static final String COLUMN_MOVIE_RELEASE_DATE = "movie_release_date";
+    public static final String COLUMN_MOVIE_IMAGE_POSTER = "movie_image_poster";
+    public static final String COLUMN_MOVIE_STRING_ID = "movie_string_id";
     // If you change the database schema, you must increment the database version.
     private static final int DATABASE_VERSION = 1;
     static final String DATABASE_NAME = "movies.db";
@@ -27,44 +43,20 @@ public class MoviesDbHelper extends SQLiteOpenHelper {
         // Create a table to hold locations.  A location consists of the string supplied in the
         // location setting, the city name, and the latitude and longitude
         final String SQL_CREATE_POPULAR_TABLE = "CREATE TABLE " +
-                MoviesContract.PopularEntry.TABLE_NAME + " (" +
-                MoviesContract.PopularEntry._ID + " INTEGER PRIMARY KEY," +
-                MoviesContract.PopularEntry.COLUMN_MOVIE_TITLE + " TEXT UNIQUE NOT NULL, " +
-                MoviesContract.PopularEntry.COLUMN_MOVIE_IMAGE_POSTER + " TEXT NOT NULL, " +
-                MoviesContract.PopularEntry.COLUMN_MOVIE_OVERVIEW + " TEXT, " +
-                MoviesContract.PopularEntry.COLUMN_MOVIE_VOTE_AVERAGE + " REAL NOT NULL, " +
-                MoviesContract.PopularEntry.COLUMN_MOVIE_RELEASE_DATE + " TEXT " +
-                " );";
-        final String SQL_CREATE_LATEST_TABLE = "CREATE TABLE " +
-                MoviesContract.LatestEntry.TABLE_NAME + " (" +
-                MoviesContract.LatestEntry._ID + " INTEGER PRIMARY KEY," +
-                MoviesContract.LatestEntry.COLUMN_MOVIE_TITLE + " TEXT UNIQUE NOT NULL, " +
-                MoviesContract.LatestEntry.COLUMN_MOVIE_IMAGE_POSTER + " TEXT NOT NULL, " +
-                MoviesContract.LatestEntry.COLUMN_MOVIE_OVERVIEW + " TEXT , " +
-                MoviesContract.LatestEntry.COLUMN_MOVIE_VOTE_AVERAGE + " REAL NOT NULL, " +
-                MoviesContract.LatestEntry.COLUMN_MOVIE_RELEASE_DATE + " TEXT " +
+                TABLE_NAME + " (" +
+                "id" + " INTEGER PRIMARY KEY," +
+                COLUMN_MOVIE_STRING_ID + " TEXT UNIQUE NOT NULL, " +
+                COLUMN_MOVIE_OVERVIEW + " TEXT, " +
+                COLUMN_MOVIE_RELEASE_DATE + " TEXT " +
+                COLUMN_MOVIE_IMAGE_POSTER + " TEXT NOT NULL, " +
+                COLUMN_MOVIE_TITLE + " TEXT UNIQUE NOT NULL, " +
+                COLUMN_MOVIE_VOTE_AVERAGE + " REAL NOT NULL, " +
                 " );";
 
-        db.execSQL(SQL_CREATE_LATEST_TABLE);
         db.execSQL(SQL_CREATE_POPULAR_TABLE);
     }
 
     /**
-     * Called when the database needs to be upgraded. The implementation
-     * should use this method to drop tables, add tables, or do anything else it
-     * needs to upgrade to the new schema version.
-     * <p/>
-     * <p>
-     * The SQLite ALTER TABLE documentation can be found
-     * <a href="http://sqlite.org/lang_altertable.html">here</a>. If you add new columns
-     * you can use ALTER TABLE to insert them into a live table. If you rename or remove columns
-     * you can use ALTER TABLE to rename the old table, then create the new table and then
-     * populate the new table with the contents of the old table.
-     * </p><p>
-     * This method executes within a transaction.  If an exception is thrown, all changes
-     * will automatically be rolled back.
-     * </p>
-     *
      * @param db         The database.
      * @param oldVersion The old database version.
      * @param newVersion The new database version.
@@ -74,5 +66,58 @@ public class MoviesDbHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + MoviesContract.PopularEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + MoviesContract.LatestEntry.TABLE_NAME);
         onCreate(db);
+    }
+
+    public List<Movie> getAllMovies() {
+        List<Movie> movies = new ArrayList<Movie>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + TABLE_NAME;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Movie movie = new Movie(cursor.getString(1), cursor.getString(2), cursor.getString(3),
+                        cursor.getString(4), cursor.getString(5), cursor.getString(6));
+                // Adding contact to list
+                movies.add(movie);
+            } while (cursor.moveToNext());
+        }
+
+        // return contact list
+        return movies;
+    }
+
+    public Movie getMovie(String name) {
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+
+        Cursor cursor = sqLiteDatabase.query(TABLE_NAME, new String[]{COLUMN_MOVIE_TITLE},
+                COLUMN_MOVIE_TITLE + "=?", new String[]{name}, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        Movie movie = new Movie(cursor.getString(1), cursor.getString(2), cursor.getString(3),
+                cursor.getString(4), cursor.getString(5), cursor.getString(6));
+        return movie;
+    }
+
+    public void addMovie(Movie movie) {
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COLUMN_MOVIE_TITLE, movie.getTitle());
+        contentValues.put(COLUMN_MOVIE_OVERVIEW, movie.getOverview());
+        contentValues.put(COLUMN_MOVIE_RELEASE_DATE, movie.getRelease_date());
+        contentValues.put(COLUMN_MOVIE_IMAGE_POSTER, movie.getPoster_path());
+        contentValues.put(COLUMN_MOVIE_VOTE_AVERAGE, movie.getVote_average());
+        contentValues.put(COLUMN_MOVIE_STRING_ID, movie.getDb_id());
+
+        sqLiteDatabase.insert(TABLE_NAME, null, contentValues);
+        sqLiteDatabase.close();
+    }
+
+    public void deleteMovie(Movie movie) {
+
     }
 }

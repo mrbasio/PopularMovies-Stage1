@@ -1,6 +1,7 @@
 package com.example.ahmad.popularmovies01.Data;
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
@@ -45,6 +46,14 @@ public class MoviesContract {
         public static final String COLUMN_MOVIE_VOTE_AVERAGE = "movie_vote_average";
         public static final String COLUMN_MOVIE_RELEASE_DATE = "movie_release_date";
         public static final String COLUMN_MOVIE_IMAGE_POSTER = "movie_image_poster";
+
+        public static Uri singleMovieUri(int id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+        public static String getId(Uri uri) {
+            return uri.getPathSegments().get(1);
+        }
     }
 
     public static final class LatestEntry implements BaseColumns {

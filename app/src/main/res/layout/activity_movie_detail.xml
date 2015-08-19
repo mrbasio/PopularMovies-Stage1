@@ -1,9 +1,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/baseLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:id="@+id/baseLayout"
     tools:context="com.example.ahmad.popularmovies01.Activities.MovieDetail">
 
     <RelativeLayout
@@ -82,9 +82,9 @@
                         <Button
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:onClick="showReviews"
                             android:text="User Reviews"
-                            android:textAllCaps="false"
-                            android:onClick="showReviews"/>
+                            android:textAllCaps="false" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -97,7 +97,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="3dp"
-                    android:background="@color/button_material_dark"/>
+                    android:background="@color/button_material_dark" />
 
                 <com.example.ahmad.popularmovies01.NonScrollListView
                     android:id="@+id/list_id_in_detail"
