@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.example.ahmad.popularmovies01.R;
 import com.squareup.picasso.Picasso;
@@ -50,7 +51,9 @@ public class ImageCursorAdapter extends CursorAdapter {
         } else {
             //I am only doing this because the images coming when asking for most voted movies
             //are not in the same size so the GridViews overlap each other
-            //imageView.setLayoutParams(new GridView.LayoutParams(550, 800));
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.
+                    LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            imageView.setLayoutParams(layoutParams);
             //imageView.setLayoutParams(new ActionBar.LayoutParams(400, 400));
         }
         imageView.setScaleType(ImageView.ScaleType.FIT_XY);

@@ -19,6 +19,7 @@ public class MovieDetail extends ActionBarActivity {
     ListView listView;
     String Tag = "TAG";
     MoviesDbHelper moviesDbHelper;
+    //private ShareActionProvider mShareActionProvider;
 
 
     @Override
