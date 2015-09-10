@@ -9,19 +9,20 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import com.example.ahmad.popularmovies01.Objects.Movie;
 import com.example.ahmad.popularmovies01.R;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by ahmad on 22/06/2015.
  */
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;
-    ArrayList<String> arrayList;
+    List<Movie> arrayList;
 
-    public ImageAdapter(Context c, ArrayList<String> arrayList) {
+    public ImageAdapter(Context c, List<Movie> arrayList) {
         mContext = c;
         this.arrayList = arrayList;
     }
@@ -40,14 +41,13 @@ public class ImageAdapter extends BaseAdapter {
 
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
-
         ImageView imageView;
         if (convertView == null) {
             // if it's not recycled, initialize some attributes
             imageView = new ImageView(mContext);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
             String type = prefs.getString("sort", mContext.getString(R.string.popularity));
-            if (type.equals("popularity")) {
+            if (!type.equals("vote_average")) {
                 imageView.setLayoutParams(new GridView.LayoutParams(GridView.LayoutParams.MATCH_PARENT,
                         GridView.LayoutParams.WRAP_CONTENT));
             } else {
@@ -60,10 +60,11 @@ public class ImageAdapter extends BaseAdapter {
         } else {
             imageView = (ImageView) convertView;
         }
-        Picasso.with(mContext).load(arrayList.get(position)).into(imageView);
+        Picasso.with(mContext).load(arrayList.get(position).getPoster_path()).into(imageView);
 
         return imageView;
     }
 
 
 }
+
