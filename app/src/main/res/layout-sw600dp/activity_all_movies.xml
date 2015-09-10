@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <fragment
+        android:id="@+id/all_movie_container"
+        android:name="com.example.ahmad.popularmovies01.Fragments.AllMovieFragment"
+        class="com.example.ahmad.popularmovies01.Fragments.AllMovieFragment"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        tools:context="com.example.ahmad.popularmovies01.Fragments.AllMovieFragment"
+        tools:ignore="MergeRootFrame" />
+
+    <FrameLayout
+        android:id="@+id/movie_detail_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"></FrameLayout>
+
+
+</LinearLayout>

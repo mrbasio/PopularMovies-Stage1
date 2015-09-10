@@ -4,5 +4,6 @@
     <array name="sort">
         <item>@string/popularity</item>
         <item>@string/highest_rated</item>
+        <item>@string/favourite</item>
     </array>
 </resources>

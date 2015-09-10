@@ -1,6 +1,7 @@
 package com.example.ahmad.popularmovies01.Routes;
 
 import com.example.ahmad.popularmovies01.Objects.Movies;
+import com.example.ahmad.popularmovies01.Objects.Reviews;
 import com.example.ahmad.popularmovies01.Objects.Trailers;
 
 import retrofit.http.GET;
@@ -17,4 +18,7 @@ public interface PublicApiRoutes {
 
     @GET("/movie/{id}/videos?api_key=fa324076f75b84a267d88a4b41ea2ed8")
     Trailers TRAILERS(@Path("id") String id);
+
+    @GET("/movie/{id}/reviews?api_key=fa324076f75b84a267d88a4b41ea2ed8")
+    Reviews REVIEWS(@Path("id") String id);
 }

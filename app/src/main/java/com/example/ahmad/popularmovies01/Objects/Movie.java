@@ -10,7 +10,6 @@ public class Movie {
     String vote_average;
     String poster_path;
     String id;
-    int db_id;
     final String s = "http://image.tmdb.org/t/p/w500/";
 
     public Movie(String id, String overview, String release_date, String poster_path, String title,
@@ -36,14 +35,6 @@ public class Movie {
 
     }
 
-    public int getDb_id() {
-        return db_id;
-    }
-
-    public void setDb_id(int db_id) {
-        this.db_id = db_id;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -65,8 +56,7 @@ public class Movie {
     }
 
     public void setPoster_path(String poster_path) {
-
-        this.poster_path = s + poster_path;
+        this.poster_path = poster_path;
     }
 
     public String getVote_average() {
@@ -91,5 +81,11 @@ public class Movie {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public boolean equals(Movie movie2) {
+        if (this.title == movie2.getTitle())
+            return true;
+        return false;
     }
 }

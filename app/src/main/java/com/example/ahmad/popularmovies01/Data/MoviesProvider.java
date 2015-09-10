@@ -4,6 +4,7 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
 /**
@@ -38,7 +39,7 @@ public class MoviesProvider extends ContentProvider {
         switch (sUriMatcher.match(uri)) {
             case 0: {
                 retCursor = moviesDbHelper.getReadableDatabase().query(
-                        MoviesContract.PopularEntry.TABLE_NAME,
+                        MoviesDbHelper.TABLE_NAME,
                         projection,
                         selection,
                         selectionArgs,
@@ -48,10 +49,10 @@ public class MoviesProvider extends ContentProvider {
                 );
             }
             case 1: {
-                String s = MoviesContract.PopularEntry.TABLE_NAME +
-                        MoviesContract.PopularEntry.TABLE_NAME + " = ?";
+                String s = MoviesDbHelper.TABLE_NAME +
+                        MoviesDbHelper.TABLE_NAME + " = ?";
                 retCursor = moviesDbHelper.getReadableDatabase().query(
-                        MoviesContract.PopularEntry.TABLE_NAME,
+                        MoviesDbHelper.TABLE_NAME,
                         projection,
                         s,
                         new String[]{MoviesContract.PopularEntry.getId(uri)},
@@ -82,16 +83,67 @@ public class MoviesProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        return null;
+        final SQLiteDatabase db = moviesDbHelper.getWritableDatabase();
+        final int match = sUriMatcher.match(uri);
+        Uri returnUri;
+
+        switch (match) {
+            case 0: {
+                long _id = db.insert(MoviesDbHelper.TABLE_NAME, null, values);
+                if (_id > 0)
+                    returnUri = MoviesContract.PopularEntry.singleMovieUri(_id);
+                else
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                break;
+            }
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+        getContext().getContentResolver().notifyChange(uri, null);
+        return returnUri;
     }
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        return 0;
+        final SQLiteDatabase db = moviesDbHelper.getWritableDatabase();
+        final int match = sUriMatcher.match(uri);
+        int rowsDeleted;
+        // this makes delete all rows return the number of rows deleted
+        if (null == selection) selection = "1";
+        switch (match) {
+            case 0:
+                rowsDeleted = db.delete(
+                        MoviesDbHelper.TABLE_NAME, selection, selectionArgs);
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+        // Because a null deletes all rows
+        if (rowsDeleted != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return rowsDeleted;
     }
 
+
     @Override
-    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        return 0;
+    public int update(
+            Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+        final SQLiteDatabase db = moviesDbHelper.getWritableDatabase();
+        final int match = sUriMatcher.match(uri);
+        int rowsUpdated;
+
+        switch (match) {
+            case 0:
+                rowsUpdated = db.update(MoviesDbHelper.TABLE_NAME, values, selection,
+                        selectionArgs);
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+        if (rowsUpdated != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return rowsUpdated;
     }
 }
