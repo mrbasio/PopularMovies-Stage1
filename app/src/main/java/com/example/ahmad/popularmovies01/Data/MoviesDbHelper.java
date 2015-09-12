@@ -22,14 +22,14 @@ public class MoviesDbHelper extends SQLiteOpenHelper {
     static final String DATABASE_NAME = "movies.db";
 
     public static final String TABLE_NAME = "popular";
+    public static final String FAV_TABLE_NAME = "favList";
+
     public static final String COLUMN_MOVIE_TITLE = "movie_title";
     public static final String COLUMN_MOVIE_OVERVIEW = "movie_overview";
     public static final String COLUMN_MOVIE_VOTE_AVERAGE = "movie_vote_average";
     public static final String COLUMN_MOVIE_RELEASE_DATE = "movie_release_date";
     public static final String COLUMN_MOVIE_IMAGE_POSTER = "movie_image_poster";
     public static final String COLUMN_MOVIE_STRING_ID = "movie_string_id";
-
-    public static final String FAV_TABLE_NAME = "favList";
 
 
     public MoviesDbHelper(Context context) {

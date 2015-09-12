@@ -33,22 +33,23 @@ public class MoviesProvider extends ContentProvider {
     public static final String AUTHORITY = "com.example.ahmad.popularmovies01";
 
     public static final String BASE_PATH = "popular";
+    public static final String BASE_PATH_FAV = "favList";
 
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + '/'
-            + BASE_PATH);
+            + BASE_PATH_FAV);
 
     public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
-            + "/todos";
+            + "/movies";
     public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
-            + "/todo";
+            + "/movie";
 
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
-        sURIMatcher.addURI(AUTHORITY, BASE_PATH, movies);
+        sURIMatcher.addURI(AUTHORITY, BASE_PATH_FAV, movies);
         //sURIMatcher.addURI(AUTHORITY, BASE_PATH, getAllMoviesCursor);
         //sURIMatcher.addURI(AUTHORITY, BASE_PATH, deleteAll);
-        sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/*", movie);
+        sURIMatcher.addURI(AUTHORITY, BASE_PATH_FAV + "/*", movie);
         //sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/*", deleteMovie);
         //sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/*", getMovie);
         //sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/*", ifExcite);
@@ -71,7 +72,8 @@ public class MoviesProvider extends ContentProvider {
         checkColumns(projection);
 
         // Set the table
-        queryBuilder.setTables(MoviesDbHelper.TABLE_NAME);
+        queryBuilder.setTables(MoviesDbHelper.FAV_TABLE_NAME);
+
 
         int uriType = sURIMatcher.match(uri);
         switch (uriType) {
@@ -87,6 +89,8 @@ public class MoviesProvider extends ContentProvider {
         }
 
         SQLiteDatabase db = moviesDbHelper.getWritableDatabase();
+        //String selectQuery = "SELECT  * FROM " + MoviesDbHelper.FAV_TABLE_NAME;
+        // Cursor cursor = db.rawQuery(selectQuery, null);
         Cursor cursor = queryBuilder.query(db, projection, selection,
                 selectionArgs, null, null, sortOrder);
         // make sure that potential listeners are getting notified
@@ -107,14 +111,14 @@ public class MoviesProvider extends ContentProvider {
         SQLiteDatabase sqlDB = moviesDbHelper.getWritableDatabase();
         long id = 0;
         switch (uriType) {
-            case movie:
-                id = sqlDB.insert(MoviesDbHelper.TABLE_NAME, null, values);
+            case movies:
+                id = sqlDB.insert(MoviesDbHelper.FAV_TABLE_NAME, null, values);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }
         getContext().getContentResolver().notifyChange(uri, null);
-        return Uri.parse(BASE_PATH + "/" + id);
+        return Uri.parse(BASE_PATH_FAV + "/" + id);
     }
 
     @Override

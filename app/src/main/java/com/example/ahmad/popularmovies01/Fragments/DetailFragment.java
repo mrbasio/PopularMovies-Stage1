@@ -1,6 +1,7 @@
 package com.example.ahmad.popularmovies01.Fragments;
 
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -30,8 +31,10 @@ import android.widget.TextView;
 
 import com.example.ahmad.popularmovies01.Adapters.TrailersAdapter;
 import com.example.ahmad.popularmovies01.Data.MoviesDbHelper;
+import com.example.ahmad.popularmovies01.Data.MoviesProvider;
 import com.example.ahmad.popularmovies01.MyDialogReviewFragment;
 import com.example.ahmad.popularmovies01.NonScrollListView;
+import com.example.ahmad.popularmovies01.Objects.Movie;
 import com.example.ahmad.popularmovies01.Objects.Trailer;
 import com.example.ahmad.popularmovies01.PicDownloadLoder;
 import com.example.ahmad.popularmovies01.R;
@@ -103,8 +106,20 @@ public class DetailFragment extends Fragment {
                     final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
                     final String type = prefs.getString("sort", getActivity().getString(R.string.popularity));
                     if (!type.equals("favourite")) {
-                        moviesDbHelper.addMovie(moviesDbHelper
-                                .getMovie(sharedPreferences.getString("id", "null"), 0), 1);
+                        Movie movie = moviesDbHelper
+                                .getMovie(sharedPreferences.getString("id", "null"), 0);
+
+                        ContentValues values = new ContentValues();
+                        values.put(MoviesDbHelper.COLUMN_MOVIE_STRING_ID, movie.getId());
+                        values.put(MoviesDbHelper.COLUMN_MOVIE_OVERVIEW, movie.getOverview());
+                        values.put(MoviesDbHelper.COLUMN_MOVIE_RELEASE_DATE, movie.getRelease_date());
+                        values.put(MoviesDbHelper.COLUMN_MOVIE_IMAGE_POSTER, movie.getPoster_path());
+                        values.put(MoviesDbHelper.COLUMN_MOVIE_TITLE, movie.getTitle());
+                        values.put(MoviesDbHelper.COLUMN_MOVIE_VOTE_AVERAGE, movie.getVote_average());
+
+                        getActivity().getContentResolver().insert(MoviesProvider.CONTENT_URI, values);
+
+                        //   moviesDbHelper.addMovie(moviesDbHelper.getMovie(sharedPreferences.getString("id", "null"), 0), 1);
 
                         getLoaderManager().initLoader(20, null, voidLoaderCallbacks);
                     } else {

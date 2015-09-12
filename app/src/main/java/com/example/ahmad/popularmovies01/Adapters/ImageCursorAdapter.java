@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.example.ahmad.popularmovies01.R;
@@ -29,8 +28,6 @@ public class ImageCursorAdapter extends CursorAdapter {
                 Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    // The newView method is used to inflate a new view and return it,
-    // you don't bind any data to the view at this point.
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         return cursorInflater.inflate(R.layout.movie_tem, parent, false);
@@ -38,7 +35,6 @@ public class ImageCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        FrameLayout frameLayout = (FrameLayout) view;
         ImageView imageView = (ImageView) view.findViewById(R.id.movie_poster);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String type = prefs.getString("sort", context.getString(R.string.popularity));

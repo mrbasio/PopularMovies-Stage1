@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import com.example.ahmad.popularmovies01.Activities.AllMovies;
 import com.example.ahmad.popularmovies01.Activities.MovieDetail;
 import com.example.ahmad.popularmovies01.Adapters.ImageCursorAdapter;
 import com.example.ahmad.popularmovies01.Data.MoviesDbHelper;
+import com.example.ahmad.popularmovies01.Data.MoviesProvider;
 import com.example.ahmad.popularmovies01.Objects.Movie;
 import com.example.ahmad.popularmovies01.R;
 import com.example.ahmad.popularmovies01.TestLoader;
@@ -51,7 +53,7 @@ public class AllMovieFragment extends Fragment
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String type = prefs.getString("sort", getActivity().getString(R.string.popularity));
         moviesDbHelper = new MoviesDbHelper(getActivity());
-        //   moviesDbHelper.deleteAll(1);
+        //moviesDbHelper.deleteAll(1);
         List<Movie> list = moviesDbHelper.getAllMovies(type);
         if (list != null)
             createGrid(list);
@@ -64,13 +66,18 @@ public class AllMovieFragment extends Fragment
     private void createGrid(final List<Movie> list) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String type = prefs.getString("sort", getActivity().getString(R.string.popularity));
-        gridView.setAdapter(new ImageCursorAdapter(getActivity(),
-                moviesDbHelper.getAllMoviesCursor(type)));
+        Cursor cursor = getActivity().getContentResolver().query(MoviesProvider.CONTENT_URI, null, null, null, null);
+        if (!type.equals(getActivity().getString(R.string.favourite)))
+            gridView.setAdapter(new ImageCursorAdapter(getActivity(),
+                    moviesDbHelper.getAllMoviesCursor(type)));
+        else
+            gridView.setAdapter(new ImageCursorAdapter(getActivity(), cursor));
         //gridview.setAdapter(new ImageAdapter(getApplication(), list));
         Bundle bundle = new Bundle();
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
+
                 SharedPreferences.Editor editor = getActivity().getSharedPreferences("PREF",
                         Context.MODE_PRIVATE).edit();
                 editor.putString("title", list.get(position).getTitle());
@@ -142,6 +149,7 @@ public class AllMovieFragment extends Fragment
     }
 
     private void addToDB(List<Movie> movies) {
+        MoviesProvider moviesProvider = new MoviesProvider();
         for (int i = 0; i < movies.size(); i++) {
             moviesDbHelper.addMovie(movies.get(i), 0);
         }
