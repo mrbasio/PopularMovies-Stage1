@@ -1,28 +1,59 @@
 package com.example.ahmad.popularmovies01.Data;
 
 import android.content.ContentProvider;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.text.TextUtils;
+
+import java.util.Arrays;
+import java.util.HashSet;
 
 /**
  * Created by ahmad on 07/08/2015.
  */
 public class MoviesProvider extends ContentProvider {
     MoviesDbHelper moviesDbHelper;
-    private static final UriMatcher sUriMatcher = buildUriMatcher();
 
-    public static UriMatcher buildUriMatcher() {
-        final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
-        final String authority = MoviesContract.CONTENT_AUTHORITY;
+    private static final int movie = 10;
+    private static final int movies = 20;
 
-        matcher.addURI(authority, MoviesContract.PATH_POPULAR, 0);
-        matcher.addURI(authority, MoviesContract.PATH_POPULAR + "/#", 1);
+    private static final int addMovie = 80;
+    private static final int getAllMoviesCursor = 90;
+    private static final int getAllMoviesList = 30;
+    private static final int deleteAll = 40;
+    private static final int deleteMovie = 50;
+    private static final int ifExcite = 60;
+    private static final int getMovie = 70;
 
-        return matcher;
+    public static final String AUTHORITY = "com.example.ahmad.popularmovies01";
+
+    public static final String BASE_PATH = "popular";
+
+    public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + '/'
+            + BASE_PATH);
+
+    public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
+            + "/todos";
+    public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
+            + "/todo";
+
+    private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+
+    static {
+        sURIMatcher.addURI(AUTHORITY, BASE_PATH, movies);
+        //sURIMatcher.addURI(AUTHORITY, BASE_PATH, getAllMoviesCursor);
+        //sURIMatcher.addURI(AUTHORITY, BASE_PATH, deleteAll);
+        sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/*", movie);
+        //sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/*", deleteMovie);
+        //sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/*", getMovie);
+        //sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/*", ifExcite);
     }
+
 
     @Override
     public boolean onCreate() {
@@ -33,117 +64,102 @@ public class MoviesProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
                         String sortOrder) {
-        // Here's the switch statement that, given a URI, will determine what kind of request it is,
-        // and query the database accordingly.
-        Cursor retCursor;
-        switch (sUriMatcher.match(uri)) {
-            case 0: {
-                retCursor = moviesDbHelper.getReadableDatabase().query(
-                        MoviesDbHelper.TABLE_NAME,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder
-                );
-            }
-            case 1: {
-                String s = MoviesDbHelper.TABLE_NAME +
-                        MoviesDbHelper.TABLE_NAME + " = ?";
-                retCursor = moviesDbHelper.getReadableDatabase().query(
-                        MoviesDbHelper.TABLE_NAME,
-                        projection,
-                        s,
-                        new String[]{MoviesContract.PopularEntry.getId(uri)},
-                        null,
-                        null,
-                        sortOrder
-                );
+        // Uisng SQLiteQueryBuilder instead of query() method
+        SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+
+        // check if the caller has requested a column which does not exists
+        checkColumns(projection);
+
+        // Set the table
+        queryBuilder.setTables(MoviesDbHelper.TABLE_NAME);
+
+        int uriType = sURIMatcher.match(uri);
+        switch (uriType) {
+            case movies:
                 break;
-            }
+            case movie:
+                // adding the ID to the original query
+                queryBuilder.appendWhere(moviesDbHelper.COLUMN_MOVIE_STRING_ID + "="
+                        + uri.getLastPathSegment());
+                break;
             default:
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
+                throw new IllegalArgumentException("Unknown URI: " + uri);
         }
-        retCursor.setNotificationUri(getContext().getContentResolver(), uri);
-        return retCursor;
+
+        SQLiteDatabase db = moviesDbHelper.getWritableDatabase();
+        Cursor cursor = queryBuilder.query(db, projection, selection,
+                selectionArgs, null, null, sortOrder);
+        // make sure that potential listeners are getting notified
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+
+        return cursor;
+
     }
 
     @Override
     public String getType(Uri uri) {
-        switch (sUriMatcher.match(uri)) {
-            case 0:
-                return MoviesContract.PopularEntry.CONTENT_TYPE;
-            case 1:
-                return MoviesContract.PopularEntry.CONTENT_ITEM_TYPE;
-            default:
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
-        }
+        return null;
     }
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        final SQLiteDatabase db = moviesDbHelper.getWritableDatabase();
-        final int match = sUriMatcher.match(uri);
-        Uri returnUri;
-
-        switch (match) {
-            case 0: {
-                long _id = db.insert(MoviesDbHelper.TABLE_NAME, null, values);
-                if (_id > 0)
-                    returnUri = MoviesContract.PopularEntry.singleMovieUri(_id);
-                else
-                    throw new android.database.SQLException("Failed to insert row into " + uri);
+        int uriType = sURIMatcher.match(uri);
+        SQLiteDatabase sqlDB = moviesDbHelper.getWritableDatabase();
+        long id = 0;
+        switch (uriType) {
+            case movie:
+                id = sqlDB.insert(MoviesDbHelper.TABLE_NAME, null, values);
                 break;
-            }
             default:
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
+                throw new IllegalArgumentException("Unknown URI: " + uri);
         }
         getContext().getContentResolver().notifyChange(uri, null);
-        return returnUri;
+        return Uri.parse(BASE_PATH + "/" + id);
     }
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        final SQLiteDatabase db = moviesDbHelper.getWritableDatabase();
-        final int match = sUriMatcher.match(uri);
-        int rowsDeleted;
-        // this makes delete all rows return the number of rows deleted
-        if (null == selection) selection = "1";
-        switch (match) {
-            case 0:
-                rowsDeleted = db.delete(
-                        MoviesDbHelper.TABLE_NAME, selection, selectionArgs);
+        int uriType = sURIMatcher.match(uri);
+        SQLiteDatabase sqlDB = moviesDbHelper.getWritableDatabase();
+        int rowsDeleted = 0;
+        switch (uriType) {
+            case movies:
+                rowsDeleted = sqlDB.delete(MoviesDbHelper.TABLE_NAME, null,
+                        null);
+                break;
+            case movie:
+                String id = uri.getLastPathSegment();
+                if (TextUtils.isEmpty(selection))
+                    rowsDeleted = sqlDB.delete(MoviesDbHelper.TABLE_NAME,
+                            MoviesDbHelper.COLUMN_MOVIE_STRING_ID + "=" + id,
+                            null);
                 break;
             default:
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
+                throw new IllegalArgumentException("Unknown URI: " + uri);
         }
-        // Because a null deletes all rows
-        if (rowsDeleted != 0) {
-            getContext().getContentResolver().notifyChange(uri, null);
-        }
+        getContext().getContentResolver().notifyChange(uri, null);
         return rowsDeleted;
     }
 
-
     @Override
-    public int update(
-            Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        final SQLiteDatabase db = moviesDbHelper.getWritableDatabase();
-        final int match = sUriMatcher.match(uri);
-        int rowsUpdated;
-
-        switch (match) {
-            case 0:
-                rowsUpdated = db.update(MoviesDbHelper.TABLE_NAME, values, selection,
-                        selectionArgs);
-                break;
-            default:
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
-        }
-        if (rowsUpdated != 0) {
-            getContext().getContentResolver().notifyChange(uri, null);
-        }
-        return rowsUpdated;
+    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+        return 0;
     }
+
+    private void checkColumns(String[] projection) {
+        String[] available = {MoviesDbHelper.COLUMN_MOVIE_STRING_ID,
+                MoviesDbHelper.COLUMN_MOVIE_IMAGE_POSTER, MoviesDbHelper.COLUMN_MOVIE_OVERVIEW,
+                MoviesDbHelper.COLUMN_MOVIE_RELEASE_DATE, MoviesDbHelper.COLUMN_MOVIE_TITLE,
+                MoviesDbHelper.COLUMN_MOVIE_VOTE_AVERAGE};
+        if (projection != null) {
+            HashSet<String> requestedColumns = new HashSet<String>(Arrays.asList(projection));
+            HashSet<String> availableColumns = new HashSet<String>(Arrays.asList(available));
+            // check if all columns which are requested are available
+            if (!availableColumns.containsAll(requestedColumns)) {
+                throw new IllegalArgumentException("Unknown columns in projection");
+            }
+        }
+    }
+
+
 }
