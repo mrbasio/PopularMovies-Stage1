@@ -7,12 +7,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
-import android.widget.GridView;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.example.ahmad.popularmovies01.R;
 import com.squareup.picasso.Picasso;
@@ -21,50 +21,34 @@ import com.squareup.picasso.Picasso;
  * Created by ahmad on 03/09/2015.
  */
 public class ImageCursorAdapter extends CursorAdapter {
+    private LayoutInflater cursorInflater;
 
     public ImageCursorAdapter(Context context, Cursor cursor) {
         super(context, cursor, 0);
+        cursorInflater = (LayoutInflater) context.getSystemService(
+                Context.LAYOUT_INFLATER_SERVICE);
     }
 
     // The newView method is used to inflate a new view and return it,
     // you don't bind any data to the view at this point.
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        View v = new ImageView(context);
-        bindView(v, context, cursor);
-
-        int cellSize = parent.getWidth() / 500;
-
-        return v;
+        return cursorInflater.inflate(R.layout.movie_tem, parent, false);
     }
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        // if it's not recycled, initialize some attributes
-        ImageView imageView = (ImageView) view;
+        FrameLayout frameLayout = (FrameLayout) view;
+        ImageView imageView = (ImageView) view.findViewById(R.id.movie_poster);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String type = prefs.getString("sort", context.getString(R.string.popularity));
-        if (!type.equals("vote_average")) {
-            //  if (true){
-            imageView.setLayoutParams(new GridView.LayoutParams(GridView.LayoutParams.MATCH_PARENT,
-                    GridView.LayoutParams.WRAP_CONTENT));
-        } else {
-            //I am only doing this because the images coming when asking for most voted movies
-            //are not in the same size so the GridViews overlap each other
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.
-                    LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            imageView.setLayoutParams(layoutParams);
-            //imageView.setLayoutParams(new ActionBar.LayoutParams(400, 400));
-        }
-        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-        imageView.setAdjustViewBounds(true);
-
         if (type.equals("favourite")) {
             Bitmap bitmap = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory()
                     + "/storage/emulated/0" + "/popularMovies" + "/" + cursor.getString(1)
                     + ".jpg");
             imageView.setImageBitmap(bitmap);
         } else {
+            String s = cursor.getString(4);
             Picasso.with(context).load(cursor.getString(4)).into(imageView);
         }
     }

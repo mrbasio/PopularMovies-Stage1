@@ -114,9 +114,10 @@ public class AllMovieFragment extends Fragment
 
         for (int i = 0; i < list.size(); i++) {
             //imagesList.add(s + list.get(i).getPoster_path());
-            if (list.get(i).getPoster_path() == null || list.get(i).getPoster_path().equals(""))
-                list.get(i).setPoster_path("http://img2.wikia.nocookie.net/__cb20130511180903/legendmarielu/images/b/b4/No_image_available.jpg");
-            else {
+            if (list.get(i).getPoster_path() == null || list.get(i).getPoster_path().equals("")) {
+                list.remove(i);
+                i--;
+            } else {
                 String temp = s + list.get(i).getPoster_path();
                 list.get(i).setPoster_path(temp);
             }

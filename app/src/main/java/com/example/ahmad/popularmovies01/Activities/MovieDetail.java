@@ -29,7 +29,7 @@ public class MovieDetail extends ActionBarActivity {
         DetailFragment fragment = new DetailFragment();
         setContentView(R.layout.activity_movie_detail);
         moviesDbHelper = new MoviesDbHelper(getApplicationContext());
-        getSupportFragmentManager().beginTransaction().add(R.id.movie_detail_container,
+        getSupportFragmentManager().beginTransaction().replace(R.id.movie_detail_container,
                 fragment, Tag).commit();
 
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
