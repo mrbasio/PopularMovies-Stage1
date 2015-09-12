@@ -1,5 +1,6 @@
 package com.example.ahmad.popularmovies01.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
@@ -19,7 +20,7 @@ public class MovieDetail extends ActionBarActivity {
     ListView listView;
     String Tag = "TAG";
     MoviesDbHelper moviesDbHelper;
-    //private ShareActionProvider mShareActionProvider;
+
 
 
     @Override
@@ -41,6 +42,9 @@ public class MovieDetail extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_movie_detail, menu);
+
+
+
         return true;
     }
 
@@ -56,4 +60,8 @@ public class MovieDetail extends ActionBarActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+
+
+
 }

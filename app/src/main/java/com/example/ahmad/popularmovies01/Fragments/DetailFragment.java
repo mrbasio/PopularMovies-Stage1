@@ -18,8 +18,13 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.ShareActionProvider;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -52,6 +57,8 @@ public class DetailFragment extends Fragment {
     CheckBox box;
     Button button;
     MoviesDbHelper moviesDbHelper;
+    private ShareActionProvider mShareActionProvider;
+    String share_content = "No trailers :(";
 
 
     public DetailFragment() {
@@ -150,6 +157,35 @@ public class DetailFragment extends Fragment {
         return root;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // Locate MenuItem with ShareActionProvider
+        MenuItem item = menu.findItem(R.id.menu_share);
+
+        // Fetch and store ShareActionProvider
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.menu_share) {
+            mShareActionProvider.setShareIntent(getDefaultShareIntent());
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private Intent getDefaultShareIntent() {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
+        intent.putExtra(Intent.EXTRA_SUBJECT, "SUBJECT");
+        intent.putExtra(Intent.EXTRA_TEXT, sharedPreferences.getString("Share", "No trailers"));
+        return intent;
+    }
 
     public boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
@@ -184,6 +220,12 @@ public class DetailFragment extends Fragment {
         @Override
         public void onLoadFinished(Loader<List<Trailer>> loader, final List<Trailer> list) {
             TrailersAdapter trailersAdapter = new TrailersAdapter(getActivity(), list);
+            SharedPreferences.Editor editor = getActivity()
+                    .getSharedPreferences("PREF", Context.MODE_PRIVATE).edit();
+            if (list.size() >= 1) {
+                editor.putString("Share", list.get(0).getKey());
+                editor.commit();
+            }
             nonScrollListView.setAdapter(trailersAdapter);
             nonScrollListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
