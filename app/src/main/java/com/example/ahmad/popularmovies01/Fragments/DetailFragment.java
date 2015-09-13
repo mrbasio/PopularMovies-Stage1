@@ -163,29 +163,20 @@ public class DetailFragment extends Fragment {
         MenuItem item = menu.findItem(R.id.menu_share);
 
         // Fetch and store ShareActionProvider
-        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+        mShareActionProvider = (android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(item);
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+        shareIntent.setType("text/plain");
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, "Checkout the trailer for "+ sharedPreferences.getString("Share", "No trailers"));
+        mShareActionProvider.setShareIntent(shareIntent);
 
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.menu_share) {
-            mShareActionProvider.setShareIntent(getDefaultShareIntent());
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
-    private Intent getDefaultShareIntent() {
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("text/plain");
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
-        intent.putExtra(Intent.EXTRA_SUBJECT, "SUBJECT");
-        intent.putExtra(Intent.EXTRA_TEXT, sharedPreferences.getString("Share", "No trailers"));
-        return intent;
-    }
+
+
 
     public boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
