@@ -3,6 +3,8 @@ package com.example.ahmad.popularmovies01.Activities;
 /**
  * Created by ahmad on 22/06/2015.
  */
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -10,6 +12,7 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
 import com.example.ahmad.popularmovies01.R;
+import com.example.ahmad.popularmovies01.Services.FetchMoviesService;
 
 
 public class SettingsActivity extends PreferenceActivity implements Preference.OnPreferenceChangeListener {
@@ -53,6 +56,8 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
             // For other preferences, set the summary to the value's simple string representation.
             preference.setSummary(stringValue);
         }
+        Intent intent = new Intent(getApplication(), FetchMoviesService.class);
+        getApplication().startService(intent);
         return true;
 
     }

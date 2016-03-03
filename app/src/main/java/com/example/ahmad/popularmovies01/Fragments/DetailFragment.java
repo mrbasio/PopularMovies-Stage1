@@ -34,16 +34,15 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.ahmad.popularmovies01.Adapters.NonScrollListView;
+import com.example.ahmad.popularmovies01.Adapters.PicDownloadLoder;
+import com.example.ahmad.popularmovies01.Adapters.TrailerLoader;
 import com.example.ahmad.popularmovies01.Adapters.TrailersAdapter;
 import com.example.ahmad.popularmovies01.Data.MoviesDbHelper;
 import com.example.ahmad.popularmovies01.Data.MoviesProvider;
-import com.example.ahmad.popularmovies01.MyDialogReviewFragment;
-import com.example.ahmad.popularmovies01.NonScrollListView;
 import com.example.ahmad.popularmovies01.Objects.Movie;
 import com.example.ahmad.popularmovies01.Objects.Trailer;
-import com.example.ahmad.popularmovies01.PicDownloadLoder;
 import com.example.ahmad.popularmovies01.R;
-import com.example.ahmad.popularmovies01.TrailerLoader;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -168,14 +167,11 @@ public class DetailFragment extends Fragment {
         shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
         shareIntent.setType("text/plain");
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("PREF", Context.MODE_PRIVATE);
-        shareIntent.putExtra(Intent.EXTRA_TEXT, "Checkout the trailer for "+ sharedPreferences.getString("Share", "No trailers"));
+        shareIntent.putExtra(Intent.EXTRA_TEXT, "Checkout the trailer for " + sharedPreferences.getString("Share", "No trailers"));
         mShareActionProvider.setShareIntent(shareIntent);
 
         super.onCreateOptionsMenu(menu, inflater);
     }
-
-
-
 
 
     public boolean isNetworkAvailable() {

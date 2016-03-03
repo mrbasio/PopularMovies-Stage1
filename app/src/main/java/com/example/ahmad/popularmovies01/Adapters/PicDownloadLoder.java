@@ -1,4 +1,4 @@
-package com.example.ahmad.popularmovies01;
+package com.example.ahmad.popularmovies01.Adapters;
 
 import android.app.DownloadManager;
 import android.content.Context;

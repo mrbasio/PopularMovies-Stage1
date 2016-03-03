@@ -1,4 +1,4 @@
-package com.example.ahmad.popularmovies01;
+package com.example.ahmad.popularmovies01.Adapters;
 
 import android.content.Context;
 import android.content.IntentFilter;
@@ -11,6 +11,7 @@ import android.support.v4.content.AsyncTaskLoader;
 import com.example.ahmad.popularmovies01.Data.MoviesDbHelper;
 import com.example.ahmad.popularmovies01.Objects.Movie;
 import com.example.ahmad.popularmovies01.Objects.Movies;
+import com.example.ahmad.popularmovies01.R;
 import com.example.ahmad.popularmovies01.Routes.PublicApiRoutes;
 
 import java.util.ArrayList;

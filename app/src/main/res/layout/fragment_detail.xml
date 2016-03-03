@@ -110,7 +110,7 @@
                     android:layout_height="1dp"
                     android:background="@color/button_material_dark" />
 
-                <com.example.ahmad.popularmovies01.NonScrollListView
+                <com.example.ahmad.popularmovies01.Adapters.NonScrollListView
                     android:id="@+id/list_id_in_detail"
                     android:layout_width="match_parent"
                     android:layout_height="50dp" />

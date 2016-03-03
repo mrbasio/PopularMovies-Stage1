@@ -1,4 +1,4 @@
-package com.example.ahmad.popularmovies01;
+package com.example.ahmad.popularmovies01.Fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -10,7 +10,9 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.example.ahmad.popularmovies01.Adapters.ReviewAdapter;
+import com.example.ahmad.popularmovies01.Adapters.ReviewLoader;
 import com.example.ahmad.popularmovies01.Objects.Review;
+import com.example.ahmad.popularmovies01.R;
 
 import java.util.List;
 
