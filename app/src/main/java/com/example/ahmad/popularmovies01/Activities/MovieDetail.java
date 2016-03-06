@@ -1,6 +1,5 @@
 package com.example.ahmad.popularmovies01.Activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
@@ -47,6 +46,9 @@ public class MovieDetail extends ActionBarActivity {
 
         return true;
     }
+
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

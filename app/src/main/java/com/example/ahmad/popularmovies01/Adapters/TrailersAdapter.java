@@ -44,7 +44,7 @@ public class TrailersAdapter extends ArrayAdapter<Trailer> {
         textView.setText(values.get(position).getName());
         return rowView;
     }
- /*   @Override
+   /* @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -63,10 +63,8 @@ public class TrailersAdapter extends ArrayAdapter<Trailer> {
             holder = (ViewHodler) convertView.getTag();
         }
         holder.someTextView.setText("Watch Trailer" + position);
-        if (values.get(position) != null)
-            Picasso.with(context)
-                    .load(values.get(position))
-                    .into(holder.someImageView);
+        holder.someImageView.setImageResource(R.drawable.youtube);
+
 
         return convertView;
     }
